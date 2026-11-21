@@ -32,7 +32,7 @@ const exe = createRequire(import.meta.url)('electron');
 const app = await electron.launch({
   executablePath: exe,
   args: ['.', `--user-data-dir=${mkdtempSync(path.join(tmpdir(), 'bc-real-'))}`],
-  env: { ...process.env, SMARTSPECTRA_DIAGNOSTICS: '1', BC_NO_GPU: process.env.BC_NO_GPU ?? '' },
+  env: { ...process.env, SMARTSPECTRA_DIAGNOSTICS: '1' },
 });
 // Frame counters printed by the SDK glue in the main process: the real frames/s the SDK receives.
 app.process().stdout?.on('data', (d) =>

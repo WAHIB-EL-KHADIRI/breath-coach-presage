@@ -14,6 +14,9 @@
     "start": "electron .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:e2e": "node scripts/e2e.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check": "npm run typecheck && npm test && npm run check:secrets",
     "pack": "npm run build && electron-builder --dir",
     "dist": "npm run build && electron-builder --win nsis"
   },
@@ -76,5 +79,14 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     }
-  }
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "typescript",
+    "breathing",
+    "presage",
+    "smartspectra",
+    "wellness"
+  ]
 }

@@ -13,7 +13,7 @@
 ## Real-camera findings (Windows 10, i7-4510U, 4 threads, ~16 GB RAM)
 
 - With the SDK's default 1280×720 capture, every real session ended in about 10 s with SDK error 14 (`kSustainedLowFrameRate`): only ~10–12 frames/s reached the SDK, falling over time. The camera itself reported 30 fps.
-- Cause: this computer is slow and was heavily loaded (95 % RAM in use). Copying 720p frames to the SDK cost ~53 ms/frame in a probe (`scripts/fps-probe.mjs`); 640×480 costs ~22 ms.
+- Cause: this computer is slow and was heavily loaded (95 % RAM in use). Copying 720p frames to the SDK cost ~53 ms/frame in a probe (`scripts/diagnostics/fps-probe.mjs`); 640×480 costs ~22 ms.
 - Fixes: capture at 640×480 @ 30 through the SDK's `useMediaStream()` (still one camera open), static orb shadow / no blur, orb ~30 fps and wave ~22 fps updates, no canvas shadowBlur. Close other heavy apps.
 - After the fixes and freeing memory, a real session ran **134 s with no error 14**, passed the 30 s warm-up, and the SDK reported **"Too dark"** for the whole run. The app showed "Signal lost", dashes, confidence n/a — no value was invented.
 - **Still no real breathing reading.** A valid key was accepted by Presage (session reached "Warming up"). A reading needs a lit, visible face and chest. 640×480 vs 720p effect on measurement quality is unknown.

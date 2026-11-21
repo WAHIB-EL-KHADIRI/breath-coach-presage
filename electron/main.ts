@@ -8,9 +8,6 @@ import { allowCamera, isTrustedUrl, type TrustedOrigins } from './security';
 
 app.setName('Breath Coach');
 
-// Experiment switch: with hardware acceleration the SDK's frame loop reads every frame back from the GPU (getImageData),
-// which can stall on older integrated graphics.
-if (process.env.BC_NO_GPU === '1') app.disableHardwareAcceleration();
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();

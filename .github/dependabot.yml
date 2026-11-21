@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    # The SmartSpectra SDK and its native runtimes are upgraded by hand after a real-camera check.
+    ignore:
+      - dependency-name: "@smartspectra/*"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

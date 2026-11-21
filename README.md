@@ -40,7 +40,8 @@ npm run dev        # Vite dev server + Electron
 npm run build      # typecheck + web bundle + Electron main/preload bundles
 npm start          # run the built app
 npm test           # unit tests (vitest)
-node scripts/e2e.mjs                       # end-to-end run of the real Electron app with a fake camera device
+npm run test:e2e                           # end-to-end run of the real Electron app with a fake camera device
+npm run check                              # typecheck + tests + secret scan
 npm run pack       # unpacked app in release/win-unpacked
 npm run dist       # Windows installer (NSIS) in release/
 ```
@@ -52,16 +53,17 @@ npm run dist       # Windows installer (NSIS) in release/
 ## Project layout
 
 ```
-electron/                 window, permissions gate, IPC, API-key storage, sandboxed preload
+electron/                 main process, camera gate, IPC, key storage, sandboxed preload
 src/app/                  App.tsx (composition only), session controller, store, hooks
 src/features/             consent, setup, measurement, guidance, controls, settings, shell
-src/domain/               session state machine, measurement validity, breath pacer, user-facing copy
+src/domain/               session machine, measurement validity, breath pacer, light estimate, user-facing copy
 src/infrastructure/presage/      the only code that touches @smartspectra/node-sdk
 src/infrastructure/simulation/   explicit simulator (same MeasurementSource contract)
 src/shared/               types, constants, ring buffer, store, bridge contract
 src/styles/               design tokens + component styles
-tests/                    behaviour tests;   scripts/e2e.mjs  Electron end-to-end run
-docs/                     ARCHITECTURE, PRIVACY, DEV_ARTICLE, DEMO_SCRIPT, REPORT
+tests/                    behaviour tests
+scripts/                  build, e2e, secret scan;  scripts/diagnostics/ real-hardware probes
+docs/                     see docs/README.md
 ```
 
 ## Known limit

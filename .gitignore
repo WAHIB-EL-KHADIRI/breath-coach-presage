@@ -6,3 +6,13 @@ shots/
 *.log
 .env
 .env.*
+*.pem
+*.key
+*.p12
+credentials.*
+secrets.*
+*.zip
+*.tgz
+coverage/
+.DS_Store
+Thumbs.db
