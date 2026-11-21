@@ -1,0 +1,79 @@
+/* Quiet Precision — design tokens. Every colour, space, radius, shadow and duration in the app comes from here. */
+:root {
+  color-scheme: dark;
+
+  /* Ink: deep night-blue surfaces */
+  --ink-1000: #04070e;
+  --ink-950: #060a13;
+  --ink-900: #090e1a;
+  --ink-850: #0c1322;
+  --ink-800: #101829;
+  --ink-700: #182238;
+  --ink-600: #222f4a;
+
+  /* Lines */
+  --line-faint: rgba(148, 178, 222, 0.08);
+  --line: rgba(148, 178, 222, 0.14);
+  --line-strong: rgba(148, 178, 222, 0.26);
+
+  /* Text — all pass 4.5:1 on --ink-900 */
+  --text-1: #eef4fb;
+  --text-2: #b3c1d6;
+  --text-3: #8696b0;
+
+  /* Brand: turquoise → mint, with a restrained violet accent */
+  --teal-300: #7df0d6;
+  --teal-400: #38dcc4;
+  --teal-500: #19b9a8;
+  --teal-700: #0b6b69;
+  --mint-200: #c8fbef;
+  --violet-400: #a994ff;
+  --violet-500: #7c68f0;
+
+  /* Status (always paired with an icon and a word, never colour alone) */
+  --ok: var(--teal-300);
+  --warn: #f2c26b;
+  --danger: #ff8f8f;
+  --sim: #f5a3ff;
+
+  /* Type */
+  --font-ui: 'Inter Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+
+  /* Space (4px base) */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+
+  /* Shape */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-pill: 999px;
+
+  /* Depth */
+  --shadow-1: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-2: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 18px 48px rgba(0, 0, 0, 0.42);
+  --glow-teal: 0 0 0 1px rgba(56, 220, 196, 0.35), 0 8px 32px rgba(25, 185, 168, 0.28);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-fast: 140ms;
+  --t-mid: 260ms;
+  --t-slow: 520ms;
+
+  /* Layout */
+  --header-h: 56px;
+  --footer-h: 40px;
+  --controls-h: 84px;
+  --rail-w: 372px;
+}

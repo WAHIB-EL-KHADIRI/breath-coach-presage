@@ -1,0 +1,80 @@
+{
+  "name": "breath-coach",
+  "version": "1.0.0",
+  "description": "Breath Coach — a calm desktop breathing coach driven by Presage SmartSpectra breathing-rate measurement.",
+  "private": true,
+  "main": "dist-electron/main.cjs",
+  "author": "Breath Coach",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build:electron": "node scripts/build-electron.mjs",
+    "build:web": "vite build",
+    "build": "npm run typecheck && npm run build:web && npm run build:electron",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder --win nsis"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@smartspectra/node-sdk": "3.5.0"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "electron": "45.3.2",
+    "electron-builder": "26.18.0",
+    "esbuild": "0.28.2",
+    "jsdom": "31.0.1",
+    "lucide-react": "1.73.0",
+    "playwright-core": "1.65.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "vitest": "3.2.4"
+  },
+  "build": {
+    "appId": "app.breathcoach.desktop",
+    "productName": "Breath Coach",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json",
+      "!node_modules/@smartspectra/node-sdk-darwin-arm64/**",
+      "!node_modules/@smartspectra/node-sdk-linux-x64/**",
+      "!node_modules/@smartspectra/node-sdk-linux-arm64/**",
+      "!node_modules/@smartspectra/node-sdk-win32-x64/**"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/@smartspectra/node-sdk-${platform}-${arch}/",
+        "to": "smartspectra/"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "dir"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
