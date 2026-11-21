@@ -75,5 +75,7 @@ Resolution was not the bottleneck on my machine; the SDK's own processing was.
 ## Code and demo
 
 - Repository: https://github.com/WAHIB-EL-KHADIRI/breath-coach-presage
-- Demo video: `<add link — recorded with the real camera>`
+- Demo: **there is no live-camera video, because I could not capture a live breathing reading** on my development computer (see
+  *Limits (honest)* above). The README contains a walkthrough of the real app in its clearly labelled **SIMULATED** mode, which uses no
+  camera and is not evidence of a real measurement.
 - Setup: see the README.

@@ -8,6 +8,11 @@ updates:
     # The SmartSpectra SDK and its native runtimes are upgraded by hand after a real-camera check.
     ignore:
       - dependency-name: "@smartspectra/*"
+      # Major upgrades are deferred: vitest 5 did not run in the author's environment; TypeScript 7 needs its own migration.
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
