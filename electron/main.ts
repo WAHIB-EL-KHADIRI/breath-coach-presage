@@ -1,9 +1,11 @@
 import { app, BrowserWindow, ipcMain, Menu, safeStorage, session, shell, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron';
+import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { CH, EXTERNAL_LINKS } from './channels';
 import { CredentialStore } from './credentials';
 import { NativeSession } from './nativeSession';
+import { cpuPercent, sumCpuTimes, type CpuTimes } from './system';
 import { allowCamera, isAllowedRequestUrl, isTrustedUrl, type TrustedOrigins } from './security';
 
 app.setName('Breath Coach');
@@ -22,6 +24,7 @@ let cameraArmed = false;
 let credentials: CredentialStore;
 let sdkAvailable = false;
 let nativeSession: NativeSession | null = null;
+let lastCpu: CpuTimes = sumCpuTimes(os.cpus());
 
 const log = (msg: string) => console.log(`[breath-coach ${new Date().toISOString().slice(11, 23)}] ${msg}`);
 
@@ -75,6 +78,15 @@ function registerIpc(): void {
     }),
   );
   ipcMain.handle(CH.nativeStop, guarded(async () => void (await nativeSession?.stop())));
+  ipcMain.handle(
+    CH.systemLoad,
+    guarded(() => {
+      const cur = sumCpuTimes(os.cpus());
+      const pct = cpuPercent(lastCpu, cur);
+      lastCpu = cur;
+      return { cpuPercent: pct };
+    }),
+  );
   ipcMain.handle(CH.sdkStatus, guarded(() => ({ available: sdkAvailable })));
   ipcMain.handle(
     CH.openExternal,

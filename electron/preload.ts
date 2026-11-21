@@ -17,6 +17,9 @@ const bridge: BreathCoachBridge = {
   armCamera: (armed: boolean) => ipcRenderer.invoke(CH.armCamera, Boolean(armed)),
   sdkStatus: () => ipcRenderer.invoke(CH.sdkStatus),
   openExternal: (id: ExternalLinkId) => ipcRenderer.invoke(CH.openExternal, String(id)),
+  system: {
+    load: () => ipcRenderer.invoke(CH.systemLoad),
+  },
   native: {
     start: (key: string) => ipcRenderer.invoke(CH.nativeStart, String(key)),
     stop: () => ipcRenderer.invoke(CH.nativeStop),

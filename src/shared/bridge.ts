@@ -39,6 +39,10 @@ export interface BreathCoachBridge {
   armCamera(armed: boolean): Promise<void>;
   sdkStatus(): Promise<SdkStatus>;
   openExternal(id: ExternalLinkId): Promise<void>;
+  /** Whole-computer CPU load, for telling the user when the machine is too busy to measure. */
+  readonly system: {
+    load(): Promise<{ cpuPercent: number | null }>;
+  };
   /** The SDK captures from the camera itself in the main process; only codes, metrics and a thumbnail come back. */
   readonly native: {
     start(key: string): Promise<NativeStartResult>;

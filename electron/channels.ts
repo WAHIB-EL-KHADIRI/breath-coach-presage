@@ -10,6 +10,7 @@ export const CH = {
   nativeStart: 'breathcoach:native:start',
   nativeStop: 'breathcoach:native:stop',
   nativeEvent: 'breathcoach:native:event',
+  systemLoad: 'breathcoach:system:load',
 } as const;
 
 /** Fixed allow-list: the renderer asks for an id, never for an arbitrary URL. */

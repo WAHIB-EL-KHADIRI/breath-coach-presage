@@ -54,6 +54,7 @@ function setup(opts: { key?: boolean; consent?: boolean; sdk?: boolean } = {}) {
     sdkStatus: async () => ({ available: opts.sdk !== false }),
     openExternal: async () => {},
     native: { start: async () => ({ ok: true }), stop: async () => {}, onEvent: () => () => {} },
+    system: { load: async () => ({ cpuPercent: 10 }) },
   };
   const store = createStore(initialState());
   const signal = new SignalStore();

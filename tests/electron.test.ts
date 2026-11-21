@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { CredentialStore, type SafeStorageLike } from '../electron/credentials';
+import { cpuPercent, sumCpuTimes } from '../electron/system';
 import { allowCamera, isAllowedRequestUrl, isTrustedUrl, normalizeApiKey } from '../electron/security';
 import { SimulatedSource } from '../src/infrastructure/simulation/simulatedSource';
 import type { SourceEvent } from '../src/shared/types';
@@ -137,5 +138,19 @@ describe('renderer request filter', () => {
     expect(isAllowedRequestUrl('ws://localhost:5173/', dev)).toBe(true);
     expect(isAllowedRequestUrl('http://localhost:9999/', dev)).toBe(false);
     expect(isAllowedRequestUrl('https://example.com/', dev)).toBe(false);
+  });
+});
+
+describe('computer load', () => {
+  const cpu = (user: number, sys: number, idle: number) => ({ times: { user, nice: 0, sys, idle, irq: 0 } });
+  it('computes whole-machine CPU use between two snapshots', () => {
+    const a = sumCpuTimes([cpu(100, 50, 850), cpu(100, 50, 850)]);
+    const b = sumCpuTimes([cpu(190, 100, 910), cpu(200, 100, 900)]);
+    // busy delta = (90+50)+(100+50) = 290 ; idle delta = 60+50 = 110 ; 290 / 400 = 72.5 %, rounded to 73
+    expect(cpuPercent(a, b)).toBe(73);
+  });
+  it('reports null when no time has passed', () => {
+    const a = sumCpuTimes([cpu(1, 1, 1)]);
+    expect(cpuPercent(a, a)).toBeNull();
   });
 });

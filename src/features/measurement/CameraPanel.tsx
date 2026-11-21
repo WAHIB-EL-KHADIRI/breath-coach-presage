@@ -7,6 +7,7 @@ import { isBlockingIssue } from '../../domain/measurement';
 import { LIGHT_BRIGHT_ABOVE, LIGHT_DARK_BELOW, lightLevel, meanLuma } from '../../domain/lighting';
 import type { SimScenario } from '../../shared/types';
 import { useLuma } from './useLuma';
+import { LoadMeter } from './LoadMeter';
 
 const SCENARIOS: { id: SimScenario; label: string }[] = [
   { id: 'normal', label: 'Normal' },
@@ -147,6 +148,7 @@ export function CameraPanel() {
             </div>
           ) : (
             <>
+              <LoadMeter />
               <div className="light" data-level={level ?? 'none'} role="status" aria-live="polite">
                 <div className="light__head">
                   <span>Light</span>
