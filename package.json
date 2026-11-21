@@ -46,7 +46,7 @@
     "react-dom": "19.3.1",
     "typescript": "5.9.3",
     "vite": "8.3.8",
-    "vitest": "3.2.4"
+    "vitest": "3.2.7"
   },
   "build": {
     "appId": "app.breathcoach.desktop",
