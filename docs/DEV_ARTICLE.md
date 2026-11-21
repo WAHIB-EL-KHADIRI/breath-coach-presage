@@ -74,6 +74,6 @@ Resolution was not the bottleneck on my machine; the SDK's own processing was.
 
 ## Code and demo
 
-- Repository: `<add public repo URL>`
+- Repository: https://github.com/WAHIB-EL-KHADIRI/breath-coach-presage
 - Demo video: `<add link — recorded with the real camera>`
 - Setup: see the README.
