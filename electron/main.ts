@@ -4,10 +4,10 @@ import { pathToFileURL } from 'node:url';
 import { CH, EXTERNAL_LINKS } from './channels';
 import { CredentialStore } from './credentials';
 import { NativeSession } from './nativeSession';
-import { allowCamera, isTrustedUrl, type TrustedOrigins } from './security';
+import { allowCamera, isAllowedRequestUrl, isTrustedUrl, type TrustedOrigins } from './security';
 
 app.setName('Breath Coach');
-
+app.enableSandbox(); // every renderer, not only the main window
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -87,6 +87,9 @@ function registerIpc(): void {
 
 function configureCameraPermissions(): void {
   const ses = session.defaultSession;
+  ses.setDevicePermissionHandler(() => false); // no USB / serial / HID / bluetooth for the page
+  // The renderer never needs the network: cancel anything that is not its own bundle.
+  ses.webRequest.onBeforeRequest((details, callback) => callback({ cancel: !isAllowedRequestUrl(details.url, trusted) }));
   ses.setPermissionRequestHandler((wc, permission, callback, details) => {
     callback(
       allowCamera({
@@ -114,7 +117,8 @@ function configureCameraPermissions(): void {
 /** Loads the SmartSpectra main-process glue. A failure is reported to the UI, it does not crash the app. */
 function bindSdk(win: BrowserWindow): void {
   try {
-    if (app.isPackaged && !process.env.SMARTSPECTRA_CAPI_PATH) {
+    if (app.isPackaged) {
+      // Packaged builds always use the runtime shipped with the app; an environment override is ignored.
       const dll = { win32: 'smartspectra_capi.dll', darwin: 'libsmartspectra_capi.dylib', linux: 'libsmartspectra_capi.so' }[process.platform as string];
       if (dll) process.env.SMARTSPECTRA_CAPI_PATH = path.join(process.resourcesPath, 'smartspectra', dll);
     }
@@ -124,6 +128,7 @@ function bindSdk(win: BrowserWindow): void {
     const { bindSmartSpectraIpc } = require('@smartspectra/node-sdk/main') as typeof import('@smartspectra/node-sdk/main');
     bindSmartSpectraIpc(win, { logger: (level, msg) => (level !== 'info' || process.env.SMARTSPECTRA_DIAGNOSTICS === '1') && log(`sdk ${level}: ${msg}`) });
     sdkAvailable = true;
+    log('SmartSpectra runtime ready');
   } catch (e) {
     sdkAvailable = false;
     log(`SmartSpectra runtime unavailable: ${e instanceof Error ? e.message.split('\n')[0] : 'unknown error'}`);
@@ -147,6 +152,9 @@ function createWindow(): void {
       sandbox: true,
       webSecurity: true,
       allowRunningInsecureContent: false,
+      webviewTag: false,
+      navigateOnDragDrop: false,
+      safeDialogs: true,
       spellcheck: false,
       devTools: !app.isPackaged,
     },
@@ -158,8 +166,14 @@ function createWindow(): void {
     if (!isTrustedUrl(url, trusted)) e.preventDefault();
   });
   win.webContents.on('will-attach-webview', (e) => e.preventDefault());
-  if (process.env.SMARTSPECTRA_DIAGNOSTICS === '1') {
-    // Diagnostics only: mirror the renderer console (SDK frame-loop messages, session errors) into the log.
+  // Any reload or navigation of the main frame ends the camera session: nothing may keep running unseen.
+  win.webContents.on('did-start-navigation', (_e, _url, _inPlace, isMainFrame) => {
+    if (!isMainFrame) return;
+    cameraArmed = false;
+    void nativeSession?.stop();
+  });
+  if (!app.isPackaged && process.env.SMARTSPECTRA_DIAGNOSTICS === '1') {
+    // Development diagnostics only (never in a packaged build): mirror the renderer console (SDK frame-loop messages, session errors) into the log.
     win.webContents.on('console-message', (e) => log(`renderer ${e.level}: ${String(e.message).slice(0, 300)}`));
   }
   win.once('ready-to-show', () => win.show());
@@ -176,6 +190,15 @@ function createWindow(): void {
   if (devUrl) void win.loadURL(devUrl);
   else void win.loadFile(indexFile);
 }
+
+// Every web contents, present or future, gets the same restrictions as the main window.
+app.on('web-contents-created', (_e, wc) => {
+  wc.setWindowOpenHandler(() => ({ action: 'deny' }));
+  wc.on('will-attach-webview', (e) => e.preventDefault());
+  wc.on('will-navigate', (e, url) => {
+    if (!isTrustedUrl(url, trusted)) e.preventDefault();
+  });
+});
 
 app.on('second-instance', () => {
   if (mainWindow) {

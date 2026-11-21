@@ -58,3 +58,36 @@ export function allowCamera(i: CameraGateInput): boolean {
 }
 
 export { normalizeApiKey } from '../src/shared/apiKey';
+
+/**
+ * Defence in depth behind the CSP: the renderer may only load its own bundled files (and the dev server while developing).
+ * Everything else (http, https, ws, ftp, extension and other file paths) is cancelled before it leaves the process.
+ */
+export function isAllowedRequestUrl(raw: string, trusted: TrustedOrigins): boolean {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  switch (u.protocol) {
+    case 'blob:':
+    case 'data:':
+    case 'devtools:':
+      return true;
+    case 'file:': {
+      const dir = trusted.fileUrl.slice(0, trusted.fileUrl.lastIndexOf('/') + 1).toLowerCase();
+      return u.href.toLowerCase().startsWith(dir);
+    }
+    case 'http:':
+    case 'https:':
+    case 'ws:':
+    case 'wss:': {
+      if (!trusted.devOrigin) return false;
+      const d = new URL(trusted.devOrigin);
+      return u.hostname === d.hostname && u.port === d.port;
+    }
+    default:
+      return false;
+  }
+}

@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { CredentialStore, type SafeStorageLike } from '../electron/credentials';
-import { allowCamera, isTrustedUrl, normalizeApiKey } from '../electron/security';
+import { allowCamera, isAllowedRequestUrl, isTrustedUrl, normalizeApiKey } from '../electron/security';
 import { SimulatedSource } from '../src/infrastructure/simulation/simulatedSource';
 import type { SourceEvent } from '../src/shared/types';
 
@@ -109,5 +109,33 @@ describe('simulated source', () => {
     await vi.advanceTimersByTimeAsync(1000);
     expect(events.length).toBe(m);
     vi.useRealTimers();
+  });
+});
+
+describe('renderer request filter', () => {
+  const prod = { fileUrl: 'file:///C:/app/dist/index.html' };
+  const dev = { ...prod, devOrigin: 'http://localhost:5173/' };
+
+  it('allows only the bundle and in-memory URLs in production', () => {
+    expect(isAllowedRequestUrl('file:///c:/app/dist/assets/font.woff2', prod)).toBe(true);
+    expect(isAllowedRequestUrl('blob:file:///abc', prod)).toBe(true);
+    expect(isAllowedRequestUrl('data:image/png;base64,AAAA', prod)).toBe(true);
+    for (const bad of [
+      'https://example.com/x',
+      'http://localhost:5173/',
+      'wss://example.com/',
+      'ftp://example.com/',
+      'file:///C:/Users/someone/secret.txt',
+      'chrome-extension://abc/x.js',
+      'not a url',
+    ])
+      expect(isAllowedRequestUrl(bad, prod)).toBe(false);
+  });
+
+  it('allows the dev server only while developing', () => {
+    expect(isAllowedRequestUrl('http://localhost:5173/src/main.tsx', dev)).toBe(true);
+    expect(isAllowedRequestUrl('ws://localhost:5173/', dev)).toBe(true);
+    expect(isAllowedRequestUrl('http://localhost:9999/', dev)).toBe(false);
+    expect(isAllowedRequestUrl('https://example.com/', dev)).toBe(false);
   });
 });

@@ -4,8 +4,8 @@
   "description": "Breath Coach — a calm desktop breathing coach driven by Presage SmartSpectra breathing-rate measurement.",
   "private": true,
   "main": "dist-electron/main.cjs",
-  "author": "Breath Coach",
-  "license": "UNLICENSED",
+  "author": "WAHIB EL KHADIRI",
+  "license": "MIT",
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build:electron": "node scripts/build-electron.mjs",
@@ -78,6 +78,15 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
+    },
+    "electronFuses": {
+      "runAsNode": false,
+      "enableCookieEncryption": true,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true,
+      "grantFileProtocolExtraPrivileges": true
     }
   },
   "keywords": [

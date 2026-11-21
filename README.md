@@ -81,7 +81,18 @@ has been exercised. That last step still needs to be done by a person with a key
 [docs/PRIVACY.md](docs/PRIVACY.md) — the in-app text is derived from it. Breath Coach does not claim that nothing leaves the
 device: what the measurement itself transmits to Presage is described by Presage and has not been independently verified here.
 
+## Author
+
+**WAHIB EL KHADIRI**
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for what is protected, the hardening in place and the known limits.
+Run `npm run check` (types, tests, secret scan) before committing.
+
 ## Licence notes
+
+Breath Coach source code: MIT (see [LICENSE](LICENSE)), Copyright (c) 2026 WAHIB EL KHADIRI.
 
 `@smartspectra/node-sdk` is proprietary (Presage Technologies); see its `LICENSE`. The native runtimes are shipped as
 `extraResources` in packaged builds.

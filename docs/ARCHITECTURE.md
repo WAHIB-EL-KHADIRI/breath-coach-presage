@@ -59,7 +59,9 @@
 
 - Renderer is untrusted-ish: IPC handlers verify `event.sender` is the main window and `senderFrame.url` is the app page.
 - Camera gate: `setPermissionRequestHandler`/`CheckHandler` allow only `media`, video-only, from the app page, **and only while armed**.
-- Navigation and `window.open` are denied; the only external link is selected by id from a fixed allow-list.
+- Navigation and `window.open` are denied for every web contents; the only external link is selected by id from a fixed allow-list.
+- A request filter in the main process cancels every renderer request that is not its own bundle (defence in depth behind the CSP).
+- Any reload or main-frame navigation disarms the camera and stops a native session. See `SECURITY.md` for the full list (fuses, supply chain).
 - CSP: `default-src 'self'`; `connect-src 'none'` in production; `worker-src blob:` (needed by the SDK frame worker).
   `style-src 'unsafe-inline'` is used for React inline style attributes.
 - The API key does reach the renderer (the official renderer SDK takes it in its constructor and forwards it to main).

@@ -12,6 +12,19 @@ directly. Do not open a public issue for something exploitable.
 | Renderer | `contextIsolation`, `sandbox`, no `nodeIntegration`; a narrow preload; IPC handlers verify the sender window and page URL; navigation and `window.open` are denied; CSP `default-src 'self'`, `connect-src 'none'`. |
 | Measurements | Not recorded or saved. The respiration trace lives in a bounded in-memory buffer cleared at session end. |
 
+## Hardening in place (Electron)
+- Renderer: `contextIsolation`, `sandbox` (also `app.enableSandbox()` for every renderer), no `nodeIntegration`, no `webviewTag`,
+  `safeDialogs`, drag-and-drop navigation off, DevTools only in development.
+- Network: the page may only load its own bundled files. A request filter cancels everything else (http, https, ws, ftp,
+  extensions, other file paths) in addition to the CSP (`connect-src 'none'`). Device permissions (USB, serial, HID, Bluetooth) are denied.
+- Every web contents (not only the main window) denies `window.open`, `<webview>` and navigation away from the app page.
+- The camera session ends on any reload or main-frame navigation, on disarm, on window close and on quit.
+- Packaged builds ignore the `SMARTSPECTRA_CAPI_PATH` environment override and the renderer-console diagnostics mirror.
+- Electron fuses (packaged build): `runAsNode` off, `NODE_OPTIONS` off, `--inspect` off, ASAR integrity validation on,
+  load app only from ASAR, cookie encryption on.
+- Supply chain: lockfile committed, exact versions (`.npmrc`), SHA-pinned GitHub Actions with read-only permissions,
+  CodeQL, Dependabot, and a secret scan in CI.
+
 ## Known limits
 - The official renderer SDK needs the API key inside the renderer to start a session.
 - What the SmartSpectra native runtime transmits during a measurement is documented by Presage and **not independently verified** here.
