@@ -45,8 +45,12 @@ measurement itself transmits isn't something I verified, so the consent text say
 - Every session gets a generation number; events from older sessions are dropped, so Reset can't be polluted by a late packet.
 - Time-based pacer on a monotonic clock, cycle-boundary rhythm changes, max 1 breath/min step.
 - `prefers-reduced-motion`: the orb stops scaling; phase is carried by text, a progress arc and soft brightness.
-- 52 unit tests plus an end-to-end run of the real Electron app (with Chromium's fake camera) that exercised the native SDK path up to Presage's key check.
+- 71 unit tests plus an end-to-end run of the real Electron app (with Chromium's fake camera) that exercised the native SDK path up to Presage's key check.
   The mapping tests are pinned against the SDK's own constants.
+- Security hardening beyond the basics: a main-process request filter that cancels anything but the app's own bundle, device
+  permissions denied, every web contents locked down, the camera session ended on any reload, and Electron fuses
+  (`RunAsNode`, `--inspect` off; ASAR integrity on) verified on the packaged build. CI runs a secret scan, CodeQL and a
+  production dependency audit with SHA-pinned actions and read-only permissions.
 
 ## Limits (honest)
 
