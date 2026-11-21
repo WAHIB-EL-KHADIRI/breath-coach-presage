@@ -1,54 +1,108 @@
+<div align="center">
+
 # Breath Coach
 
-A calm desktop breathing coach. It measures your breathing rate through your laptop camera with
-[Presage SmartSpectra](https://smartspectra.presagetech.com/) and shapes a gentle, paced breathing guide around it.
+**A quiet desktop breathing coach that measures your breathing through your laptop camera and paces a calm guide around it.**
 
-> For relaxation only. Not a medical device; it does not diagnose, monitor or treat anything.
+*Honest by design: a measured number is only ever shown when it is fresh, valid and confident.*
 
-**Design identity — "Quiet Precision":** deep night-blue surfaces, a single turquoise→mint light, a restrained violet accent,
-tabular numerals so nothing shifts while values update, and one layered breathing orb at the centre of everything.
+![License: MIT](https://img.shields.io/badge/license-MIT-2fd6c0)
+![Electron 45](https://img.shields.io/badge/Electron-45-7c68f0)
+![React 19](https://img.shields.io/badge/React-19-38dcc4)
+![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-a994ff)
+![Platform: Windows x64 (tested)](https://img.shields.io/badge/platform-Windows%20x64%20(tested)-555)
+![Not a medical device](https://img.shields.io/badge/relaxation-not%20a%20medical%20device-c99430)
 
-## What it does
+![Breath Coach walkthrough, simulated data](docs/assets/demo-simulated.gif)
 
-- **Measured breathing rate** (from SmartSpectra) is shown separately from the **guide rhythm** (what the circle does).
-- The guide follows the measured rate **only** when the reading is fresh (≤ 10 s), valid, and the source confidence is ≥ 50 %.
-  The guide is clamped to 6–12 breaths/min; the measured value is never clamped.
-  Otherwise it holds a default 6/min rhythm and says so.
-- Inhale is 40 % and exhale 60 % of every cycle, no breath-hold. Rhythm changes apply only at a cycle boundary and by at most 1/min per cycle.
-- The 30 s warm-up shows "Warming up" and dashes. Finishing it is not treated as proof of a valid reading.
-- The wave is the real respiration trace from the SDK (chest trace, abdomen as fallback), drawn on a canvas from a bounded in-memory buffer.
-- **Light helper:** a live brightness estimate from the camera preview (a hint; the SDK's own "Too dark" is the authority), and a **Screen light** toggle that surrounds the window with a warm white frame to light your face in a dark room.
-- A clearly labelled **SIMULATED** mode (never automatic, never uses the camera) exists for exploring the interface.
+<sub>**This walkthrough uses the built-in SIMULATED mode** (synthetic data, no camera). The label is on screen the whole time.
+Breath Coach is built on <a href="https://smartspectra.presagetech.com/">Presage SmartSpectra</a> for the real measurement.</sub>
 
-## Requirements
+</div>
 
-| | |
+---
+
+## Why Breath Coach
+
+Most breathing apps ask you to follow a circle. Breath Coach also *looks* at your breathing, then keeps four things strictly apart so the
+screen never over-claims:
+
+| | What it is | Rule |
+|---|---|---|
+| **Measured breathing rate** | An average reported by the SmartSpectra SDK | Shown as received. Dashes while warming up, and again whenever the reading is stale, invalid or the signal is lost. |
+| **Guide rhythm** | What the circle does (6–12 breaths/min, 40 % in / 60 % out, no hold) | Follows the measured rate **only** if the reading is fresh (≤ 10 s) and confidence ≥ 50 %. Otherwise a steady 6/min, labelled as such. |
+| **Signal confidence** | The SDK's own 0–100 value | Never invented. `n/a` when the source gives none. |
+| **Warm-up progress** | Elapsed time of the 30 s warm-up | Not a quality score, and finishing it is not proof of a valid reading. |
+
+## Features
+
+- **Calm, precise interface.** A layered breathing orb at the centre, a live respiration trace drawn from the SDK's real signal, tabular
+  numerals so nothing shifts while values update, `prefers-reduced-motion` support, full keyboard use and screen-reader labels.
+- **Consent first.** The camera opens only after you agree and press Start, and is released on Stop, Reset, withdrawing consent,
+  closing the window or any error. The microphone is never requested. Nothing is recorded or saved.
+- **Helps you fix the room.** A live **light meter** from the camera preview, hardware **brightness boost** for dim cameras, and a
+  **screen light** frame that lights your face.
+- **Failure states that explain themselves.** Camera denied, busy or lost; invalid key; no credits; network; a slow camera feed —
+  each in plain language with a next step, never a raw SDK message.
+- **Explicit simulation.** `SIMULATED` is always visible, never switches on by itself, never uses the camera, never mixes with real data.
+- **Hardened Electron app.** Sandbox, context isolation, a request filter that cancels everything but the app's own bundle, a camera
+  permission gate that is closed unless a session is armed, Electron fuses on packaged builds. See [SECURITY.md](SECURITY.md).
+
+## Screenshots
+
+| Welcome & consent | Warm-up (no number yet) |
 |---|---|
-| Node.js | ≥ 20 (developed on 22) |
-| OS | Windows x64 (the only platform tested — see below). The SDK also ships macOS arm64 and Linux builds that are **untested** here. |
-| Camera | Any webcam. Face and upper chest should be visible. |
-| API key | From [physiology.presagetech.com](https://physiology.presagetech.com/auth/login). Without one you can only use the simulation. |
+| ![Welcome](docs/assets/screenshot-welcome.png) | ![Warm-up](docs/assets/screenshot-warmup.png) |
+| **Measuring (simulated)** | **Signal lost: the number disappears** |
+| ![Measuring](docs/assets/screenshot-measuring.png) | ![Signal lost](docs/assets/screenshot-signal-lost.png) |
+| **Errors explain the next step** | **Settings** |
+| ![Error](docs/assets/screenshot-error.png) | ![Settings](docs/assets/screenshot-settings.png) |
 
-## Run
+<sub>All screenshots show simulated data.</sub>
+
+## Quick start
+
+**Requirements:** Node.js ≥ 20, Windows x64 (the only platform tested), a webcam, and a Presage API key from
+[physiology.presagetech.com](https://physiology.presagetech.com/auth/login). Without a key you can explore the simulation.
 
 ```bash
 npm install
 npm run dev        # Vite dev server + Electron
 ```
 
-```bash
-npm run build      # typecheck + web bundle + Electron main/preload bundles
-npm start          # run the built app
-npm test           # unit tests (vitest)
-npm run test:e2e                           # end-to-end run of the real Electron app with a fake camera device
-npm run check                              # typecheck + tests + secret scan
-npm run pack       # unpacked app in release/win-unpacked
-npm run dist       # Windows installer (NSIS) in release/
+Then: tick the consent box → paste your API key → check the **Light** meter says *Good* → sit with face, shoulders and upper chest in
+the preview → **Start session** and stay still for 40 seconds. The first reading appears after the 30 s warm-up.
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development (Vite + Electron) |
+| `npm run build` / `npm start` | Typecheck, bundle, then run the built app |
+| `npm run check` | Typecheck + unit tests + secret scan |
+| `npm run test:e2e` | End-to-end run of the real Electron app with a fake camera (no key needed) |
+| `npm run pack` / `npm run dist` | Unpacked app / Windows installer (NSIS) in `release/` |
+| `npm run demo` | Re-record the README walkthrough (simulated mode) |
+
+> Some shells export `ELECTRON_RUN_AS_NODE=1`, which makes Electron start as plain Node and crash with
+> `Cannot read properties of undefined (reading 'setName')`. Run `unset ELECTRON_RUN_AS_NODE`.
+
+## How it works
+
+```
+Camera ──► SmartSpectra SDK ──► metrics (rate, confidence, trace) + validation codes
+                                        │
+                  SessionController (generation-guarded, one session at a time)
+                                        │
+     assess() decides what may be claimed ──► deriveGuidance() ──► BreathPacer ──► the orb
+                                        │
+                      store (slow data)  +  ring buffer (trace) ──► canvas
 ```
 
-> Some shells (including VS Code's integrated terminal on certain setups) export `ELECTRON_RUN_AS_NODE=1`, which makes
-> Electron behave like plain Node and crash at startup with `Cannot read properties of undefined (reading 'setName')`.
-> Unset it: `unset ELECTRON_RUN_AS_NODE`.
+- **One source contract.** The real adapter and the simulator both implement `MeasurementSource`; nothing else knows which is active.
+- **Stale events can't leak.** Every start, stop, reset or failure bumps a generation; events from an older generation are dropped.
+- **Time, not frames.** The pacer runs on a monotonic clock; minimising the window and coming back never desynchronises it.
+- **Bounded memory.** The respiration trace is a fixed-size ring buffer, cleared when the session ends.
+
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Project layout
 
@@ -62,37 +116,48 @@ src/infrastructure/simulation/   explicit simulator (same MeasurementSource cont
 src/shared/               types, constants, ring buffer, store, bridge contract
 src/styles/               design tokens + component styles
 tests/                    behaviour tests
-scripts/                  build, e2e, secret scan;  scripts/diagnostics/ real-hardware probes
+scripts/                  build, e2e, demo, secret scan;  scripts/diagnostics/ real-hardware probes
 docs/                     see docs/README.md
 ```
 
-## Known limit
+## Privacy and security
 
-On an Intel i7-4510U (2014) every real session ended with SDK error 14 (frame rate too low); no live reading was captured there. Use a
-faster computer for the live demo: see [docs/TRANSFER.md](docs/TRANSFER.md) and [docs/REPORT.md](docs/REPORT.md).
+- Camera only after consent and an explicit Start; no recording; no microphone; readings are never saved.
+- The API key lives in memory unless you choose "Remember" (encrypted with the OS, Windows DPAPI). Never logged, never in the repo.
+- SDK telemetry is turned off. **What the measurement itself transmits to Presage is described by Presage and has not been
+  independently verified here**, so Breath Coach does not claim that nothing leaves your device.
 
-## Verified vs. not verified
+Read [docs/PRIVACY.md](docs/PRIVACY.md) and [SECURITY.md](SECURITY.md).
 
-See [docs/REPORT.md](docs/REPORT.md). In short: everything except a **live measurement with a valid key and a real camera**
-has been exercised. That last step still needs to be done by a person with a key before recording the demo.
+## Troubleshooting
 
-## Privacy
+| You see | Meaning | Try |
+|---|---|---|
+| **The camera feed is too slow (Ref 14)** | The SDK ended the session because too few frames per second reached it | Close heavy apps; use a faster computer. On a 2014 i7-4510U this happened every time, see [docs/REPORT.md](docs/REPORT.md) |
+| **Too dark** | The camera image is too dim to measure | Light on your face, the screen-light button, keep *Brighten camera image* on; wait for the meter to say *Good* |
+| **Chest not visible / No face found** | Framing | Sit back so face, shoulders and upper chest are in the preview |
+| **The API key was not accepted** | Presage rejected the key | Check for typos or extra spaces; make a fresh key |
+| Settings → *SDK camera engine (experimental)* | The SDK opens the camera itself | Not verified to be faster; off by default |
 
-[docs/PRIVACY.md](docs/PRIVACY.md) — the in-app text is derived from it. Breath Coach does not claim that nothing leaves the
-device: what the measurement itself transmits to Presage is described by Presage and has not been independently verified here.
+## Honest status
+
+| | |
+|---|---|
+| Verified | Types, 71 unit tests, end-to-end run of the real Electron app, packaged build with fuses, a key accepted by Presage, real sessions reaching the warm-up |
+| **Not captured** | **A live breathing reading.** On the development computer every real session ended with SDK error 14 (frame rate too low). A faster computer is needed for a live demo: [docs/TRANSFER.md](docs/TRANSFER.md) |
+| Not verified | macOS and Linux; the Windows installer; what the native runtime transmits; screen readers (labels are in place) |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). The one rule that matters most: **never show a value that is stale, invalid or low-confidence
+as live, and never mix simulated and real data.**
 
 ## Author
 
 **WAHIB EL KHADIRI**
 
-## Security
+## Licence
 
-See [SECURITY.md](SECURITY.md) for what is protected, the hardening in place and the known limits.
-Run `npm run check` (types, tests, secret scan) before committing.
-
-## Licence notes
-
-Breath Coach source code: MIT (see [LICENSE](LICENSE)), Copyright (c) 2026 WAHIB EL KHADIRI.
-
-`@smartspectra/node-sdk` is proprietary (Presage Technologies); see its `LICENSE`. The native runtimes are shipped as
-`extraResources` in packaged builds.
+Source code: MIT (see [LICENSE](LICENSE)), Copyright (c) 2026 WAHIB EL KHADIRI.
+`@smartspectra/node-sdk` is proprietary to Presage Technologies, Inc. and used under its own licence; its native runtimes ship as
+`extraResources` in packaged builds. Breath Coach is for relaxation and is not a medical device.

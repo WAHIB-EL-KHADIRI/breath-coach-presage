@@ -5,6 +5,7 @@
 | `build-electron.mjs` | Bundles the Electron main process and the sandboxed preload (used by `npm run build`). |
 | `dev.mjs` | Vite dev server + Electron (`npm run dev`). |
 | `e2e.mjs` | End-to-end run of the real built app with Chromium's **fake** camera. No key needed (`npm run test:e2e`). |
+| `make-demo.mjs` | Re-records the README walkthrough GIF and screenshots in **simulated** mode (no camera, no key): `npm run demo`. |
 | `check-secrets.mjs` | Scans tracked files for secrets (`npm run check:secrets`). |
 
 ## `diagnostics/` — real hardware probes

@@ -18,7 +18,8 @@
     "check:secrets": "node scripts/check-secrets.mjs",
     "check": "npm run typecheck && npm test && npm run check:secrets",
     "pack": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder --win nsis"
+    "dist": "npm run build && electron-builder --win nsis",
+    "demo": "node scripts/make-demo.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -36,9 +37,11 @@
     "electron": "45.3.2",
     "electron-builder": "26.18.0",
     "esbuild": "0.28.2",
+    "gifenc": "1.0.3",
     "jsdom": "31.0.1",
     "lucide-react": "1.73.0",
     "playwright-core": "1.65.1",
+    "pngjs": "7.0.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "typescript": "5.9.3",
