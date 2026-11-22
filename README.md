@@ -143,7 +143,7 @@ Read [docs/PRIVACY.md](docs/PRIVACY.md) and [SECURITY.md](SECURITY.md).
 
 | | |
 |---|---|
-| Verified | Types, 71 unit tests, end-to-end run of the real Electron app, packaged build with fuses, a key accepted by Presage, real sessions reaching the warm-up |
+| Verified | Types, 73 unit tests, end-to-end run of the real Electron app, packaged build with fuses, a key accepted by Presage, real sessions reaching the warm-up |
 | **Not captured** | **A live breathing reading.** On the development computer every real session ended with SDK error 14 (frame rate too low). A faster computer is needed for a live demo: [docs/TRANSFER.md](docs/TRANSFER.md) |
 | Not verified | macOS and Linux; the Windows installer; what the native runtime transmits; screen readers (labels are in place) |
 
