@@ -21,7 +21,7 @@ export interface Prefs {
   lowLoad: boolean;
 }
 
-export const DEFAULT_PREFS: Prefs = { showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine: 'browser', lowLoad: true };
+export const DEFAULT_PREFS: Prefs = { showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine: 'browser', lowLoad: false };
 
 export interface AppState {
   ready: boolean;

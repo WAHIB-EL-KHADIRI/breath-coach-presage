@@ -31,7 +31,7 @@ export interface ControllerDeps {
 }
 
 const CONSENT_KEY = 'breathcoach.consent.v1';
-const PREFS_KEY = 'breathcoach.prefs.v1';
+const PREFS_KEY = 'breathcoach.prefs.v2';
 
 /**
  * Owns the session lifecycle. Every source gets a generation number; events and
