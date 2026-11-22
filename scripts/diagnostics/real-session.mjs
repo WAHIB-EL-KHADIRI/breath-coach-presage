@@ -43,6 +43,12 @@ app.process().stdout?.on('data', (d) =>
 );
 const page = await app.firstWindow();
 await page.waitForSelector('.app');
+if (process.env.ENGINE) {
+  // ENGINE=native uses the SDK's own camera capture (it manages Windows exposure); default is the browser path.
+  await page.evaluate((engine) => localStorage.setItem('breathcoach.prefs.v1', JSON.stringify({ showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine })), process.env.ENGINE);
+  await page.reload();
+  await page.waitForSelector('.app');
+}
 await page.getByRole('checkbox').check();
 await page.getByRole('button', { name: 'Continue' }).click();
 await page.getByLabel('Presage API key').fill(key);
@@ -65,7 +71,8 @@ for (let i = 0; i < 36; i++) {
     rate: await text('.rate__number'),
     notice: await text('.notice h2'),
     tip: await text('.tip strong'),
-    light: await text('.light__head strong'),
+    light: await text('.light:has-text("Light") .light__head strong'),
+    load: await text('.light:has-text("Computer load") .light__head strong'),
     warm: await text('.meter__head span:last-child'),
   };
   console.log(JSON.stringify(s));
