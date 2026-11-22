@@ -22,20 +22,29 @@ There is also an explicit **SIMULATED** mode (no camera, always labelled) so the
 
 ## Demo
 
-**I do not have a live-camera demo video, and I want to be upfront about why.** On the only computer I built this on (an Intel i7-4510U from
-2014) every real session ended with the SDK's "frame rate stayed too low" error (code 14), so I never captured a live breathing reading.
-I measured instead of guessing: the camera alone delivered 26 to 30 fps but only about 12 to 15 fps reached the SDK. Lower resolution, a lighter
-UI, no GPU acceleration, SDK-owned capture and a high-performance power plan did not change that, and Presage's own `checkDeviceReadiness()`
-said "limited" until other apps were closed. A valid key was accepted by Presage and real sessions ran through the warm-up. Details are in
-`docs/REPORT.md` in the repository.
+**I do not have a live-camera demo video, and I want to be upfront about why.** I built this on the only computer I have (an Intel i7-4510U from
+2014, 2 cores, no budget for a newer one). I measured instead of guessing. Presage's own readiness policy (read from the SDK) asks for about 27 fps sustained for 20 s.
+On a quiet machine a real session ran **152 s at about 25 fps with no error 14**, and `checkDeviceReadiness()` returned "ready". Whenever background load was normal
+(Windows Update, Defender, an editor) only about 7 to 15 fps reached the SDK and the session ended with the "frame rate stayed too low" error (code 14).
+So the limit is CPU starvation on my machine, not the SDK or the app. I still did not capture a clean live breathing reading, and I am not claiming one.
+Details and measurements are in `docs/REPORT.md`.
 
-The repository README contains a walkthrough of the real app in its **SIMULATED** mode. It uses no camera and is **not** evidence of a real measurement.
+The README shows a walkthrough of the real app in its **SIMULATED** mode. It uses no camera and is **not** evidence of a real measurement.
 
 ## Code
 
 - Repository: https://github.com/WAHIB-EL-KHADIRI/breath-coach-presage (MIT for the app source; the SmartSpectra SDK keeps its own licence)
-- Setup: `npm install`, then `npm run dev` (Node 20+, Windows x64). Paste a Presage API key in the setup screen, or choose "Explore without a camera (simulated)". No login is needed to test it.
-- 71 unit tests, an end-to-end run of the real Electron app, CI with a secret scan, and a hardened packaged build (see `SECURITY.md`).
+- 73 unit tests, an end-to-end run of the real Electron app, CI with CodeQL and a secret scan, and a hardened packaged build (see `SECURITY.md`).
+
+## How to Test (for judges)
+
+The app is ready to run on your own computer. No login is needed.
+
+1. **See everything in one minute, no camera and no key:** `npm install`, then `npm run dev` (Node 20+, Windows x64). Tick the consent box, then choose **"Explore without a camera (simulated)"**. The mode is always labelled SIMULATED. Use the scenario buttons (Normal, Signal lost, Low confidence, Movement, Connection error) to see how the app handles each state.
+2. **Real measurement, with your own Presage key:** paste the key on the setup screen, sit in good light with face and chest in view, press Start. Use a computer with 4 or more cores and close heavy apps (the SDK needs about 27 fps). Expect dashes for the first 30 s, then the measured rate with its confidence.
+3. `npm test` runs the 73 unit tests.
+
+I would be very happy if you ran it on a stronger computer than mine, because that is exactly the evidence I could not produce.
 
 ## How It Responds to Human Signals
 
@@ -47,13 +56,13 @@ implements the same contract. From each packet I take the newest `breathing.rate
 ("Too dark", "Chest not visible"), never raw SDK text.
 
 What I added from real runs on the dev machine: a live **light meter** from the preview, a hardware **brightness boost** (raised a very dark preview from luma 23 to 73 without lowering the frame rate)
-and a **screen light** frame to help in dim rooms. These fixed "Too dark"; they could not fix the frame rate.
+and a **screen light** frame to help in dim rooms. These fixed "Too dark"; they could not fix a busy CPU.
 
 ## Prize Categories
 
 **Best Thoughtful Real-World Use.** The need: people who want to slow their breathing for relaxation but have no feedback on whether what the
 screen says matches reality. The design: consent first, a light meter and plain-language fixes for framing and lighting, failure states that explain the next step,
-and a measurement that disappears rather than lie. Honest caveat: without a live reading on my hardware, this entry does not meet the live-signal requirement, and I am not claiming it does.
+and a measurement that disappears rather than lie. Honest caveat: I did not capture a live reading on my hardware, so please test the real path on your own computer; I am not claiming a live result I do not have.
 
 ## Consent and Data Handling
 
