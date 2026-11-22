@@ -150,11 +150,11 @@ export function CameraPanel() {
             </div>
           ) : (
             <>
-              <LoadMeter />
+              <LoadMeter measuring={running} />
               <div className="light" data-level={level ?? 'none'} role="status" aria-live="polite">
                 <div className="light__head">
                   <span>Light</span>
-                  <strong>{level ? LIGHT_COPY[level].label : live ? 'Checking…' : '—'}</strong>
+                  <strong>{level ? LIGHT_COPY[level].label : live && shown ? 'Checking…' : live ? 'Paused' : '—'}</strong>
                 </div>
                 <div className="light__track" role="img" aria-label={luma == null ? 'Light level unknown' : `Brightness ${Math.round((luma / 255) * 100)} percent`}>
                   <i className="light__zone" style={{ left: `${(LIGHT_DARK_BELOW / 255) * 100}%`, width: `${((LIGHT_BRIGHT_ABOVE - LIGHT_DARK_BELOW) / 255) * 100}%` }} />

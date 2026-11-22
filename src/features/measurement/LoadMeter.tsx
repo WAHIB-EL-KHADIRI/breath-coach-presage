@@ -8,7 +8,7 @@ const BUSY_ABOVE = 75;
  * Whole-computer CPU load, polled every 2 s from the main process. The SDK needs about 27 frames/s to reach it;
  * on a busy computer (Windows Update, an IDE, scanners) it gets a fraction of that and ends the session with error 14.
  */
-export function LoadMeter() {
+export function LoadMeter({ measuring = false }: { measuring?: boolean }) {
   const [load, setLoad] = useState<number | null>(null);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function LoadMeter() {
   }, []);
 
   if (load == null) return null;
-  const busy = load > BUSY_ABOVE;
+  const busy = load > (measuring ? 95 : BUSY_ABOVE);
   return (
     <div className="light" data-level={busy ? 'dark' : 'ok'} role="status" aria-live="polite">
       <div className="light__head">
@@ -43,7 +43,11 @@ export function LoadMeter() {
         <i className="light__zone" style={{ left: 0, width: `${BUSY_ABOVE}%` }} />
         <i className="light__dot" style={{ left: `${Math.min(100, load)}%` }} />
       </div>
-      {busy && <p className="light__hint">Too busy to measure reliably. Close other apps, or let Windows Update finish.</p>}
+      {busy && (
+        <p className="light__hint">
+          {measuring ? 'Includes this app while it measures. If the session stops, close other apps.' : 'Too busy to measure reliably. Close other apps, or let Windows Update finish.'}
+        </p>
+      )}
     </div>
   );
 }
