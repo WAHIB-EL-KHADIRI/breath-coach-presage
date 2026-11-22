@@ -1156,3 +1156,11 @@
     width: 152px;
   }
 }
+
+/* Preview hidden (or performance mode): the note takes the full row so the meters are not squeezed off-screen. */
+.camera__layout > .tip {
+  grid-column: 1 / -1;
+}
+.rail {
+  overflow-x: hidden;
+}
