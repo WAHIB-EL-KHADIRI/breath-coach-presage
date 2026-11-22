@@ -43,9 +43,9 @@ app.process().stdout?.on('data', (d) =>
 );
 const page = await app.firstWindow();
 await page.waitForSelector('.app');
-if (process.env.ENGINE) {
+if (process.env.ENGINE || process.env.LOWLOAD) {
   // ENGINE=native uses the SDK's own camera capture (it manages Windows exposure); default is the browser path.
-  await page.evaluate((engine) => localStorage.setItem('breathcoach.prefs.v1', JSON.stringify({ showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine })), process.env.ENGINE);
+  await page.evaluate(({ engine, lowLoad }) => localStorage.setItem('breathcoach.prefs.v1', JSON.stringify({ showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine, lowLoad })), { engine: process.env.ENGINE || 'browser', lowLoad: process.env.LOWLOAD === '1' });
   await page.reload();
   await page.waitForSelector('.app');
 }

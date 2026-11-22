@@ -19,6 +19,7 @@ const now = () => performance.now();
 function Stage() {
   const showCountdown = useApp((s) => s.prefs.showCountdown);
   const soundOn = useApp((s) => s.prefs.soundOn);
+  const lowLoad = useApp((s) => s.prefs.lowLoad);
   const phase = useApp((s) => s.phase);
   const error = useApp((s) => s.error);
   const active = phase === 'running' || phase === 'starting';
@@ -30,7 +31,7 @@ function Stage() {
   );
   return (
     <div className="stage">
-      <BreathOrb pacer={controller.pacer} now={now} showCountdown={showCountdown} dim={Boolean(error)} onPhase={onPhase} />
+      <BreathOrb pacer={controller.pacer} now={now} showCountdown={showCountdown} dim={Boolean(error)} onPhase={onPhase} still={lowLoad && active} />
       <GuidanceCaption />
       <StatusNotice />
     </div>

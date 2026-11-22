@@ -17,9 +17,11 @@ export interface Prefs {
   cameraBoost: boolean;
   /** 'native': the SDK opens the camera itself (fast path). 'browser': Chromium opens it and frames are forwarded. */
   engine: 'native' | 'browser';
+  /** While measuring: pause the orb animation, the wave drawing and the camera preview, to leave CPU to the measurement engine. */
+  lowLoad: boolean;
 }
 
-export const DEFAULT_PREFS: Prefs = { showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine: 'browser' };
+export const DEFAULT_PREFS: Prefs = { showCountdown: true, soundOn: false, cameraVisible: true, lightBoost: false, cameraBoost: true, engine: 'browser', lowLoad: true };
 
 export interface AppState {
   ready: boolean;

@@ -34,6 +34,7 @@ export function CameraPanel() {
   const stream = useApp((s) => s.stream);
   const visible = useApp((s) => s.prefs.cameraVisible);
   const lightBoost = useApp((s) => s.prefs.lightBoost);
+  const lowLoad = useApp((s) => s.prefs.lowLoad);
   const mode = useApp((s) => s.mode);
   const phase = useApp((s) => s.phase);
   const validation = useApp((s) => s.validation);
@@ -77,9 +78,10 @@ export function CameraPanel() {
   }, [stream]);
 
   const running = phase === 'running' || phase === 'starting';
+  const shown = visible && !(lowLoad && running); // performance mode hides the preview only while measuring
   const simulated = mode === 'simulated';
   const issue = isBlockingIssue(validation?.kind) ? validation!.kind : null;
-  const videoLuma = useLuma(video, Boolean(stream) && visible);
+  const videoLuma = useLuma(video, Boolean(stream) && shown);
   const luma = previewActive ? nativeLuma : videoLuma;
   const live = Boolean(stream) || previewActive;
   const level = luma == null ? null : lightLevel(luma);
@@ -114,7 +116,7 @@ export function CameraPanel() {
       </div>
 
       <div className="camera__layout" data-sim={simulated}>
-        {visible ? (
+        {shown ? (
           <div className="camera__body">
             <video ref={video} className="camera__video" muted playsInline autoPlay aria-label="Camera preview" hidden={!stream} />
             <canvas ref={canvas} className="camera__video" aria-label="Camera preview" hidden={!previewActive} />

@@ -12,10 +12,12 @@ export function SignalWave() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const empty = useRef<HTMLDivElement>(null);
   const running = phase === 'running';
+  const lowLoad = useApp((s) => s.prefs.lowLoad);
+  const paused = lowLoad && (running || phase === 'starting');
 
   useEffect(() => {
     const el = canvas.current;
-    if (!el) return;
+    if (!el || paused) return;
     const ctx = el.getContext('2d');
     if (!ctx) return;
     let raf = 0;
@@ -111,9 +113,9 @@ export function SignalWave() {
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [running]);
+  }, [running, paused]);
 
-  const message = phase === 'running' ? 'Waiting for signal…' : phase === 'starting' ? 'Starting…' : 'The live signal appears here during a session.';
+  const message = paused ? 'Performance mode: drawing is paused to leave CPU to the measurement.' : phase === 'running' ? 'Waiting for signal…' : phase === 'starting' ? 'Starting…' : 'The live signal appears here during a session.';
 
   return (
     <section className="panel" aria-labelledby="wave-h">

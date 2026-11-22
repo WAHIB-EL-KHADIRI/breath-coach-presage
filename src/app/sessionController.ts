@@ -373,6 +373,7 @@ export class SessionController {
         lightBoost: typeof p.lightBoost === 'boolean' ? p.lightBoost : DEFAULT_PREFS.lightBoost,
         cameraBoost: typeof p.cameraBoost === 'boolean' ? p.cameraBoost : DEFAULT_PREFS.cameraBoost,
         engine: p.engine === 'browser' || p.engine === 'native' ? p.engine : DEFAULT_PREFS.engine,
+        lowLoad: typeof p.lowLoad === 'boolean' ? p.lowLoad : DEFAULT_PREFS.lowLoad,
       };
     } catch {
       return DEFAULT_PREFS;

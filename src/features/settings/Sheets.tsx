@@ -88,6 +88,7 @@ export function SettingsSheet() {
         <h3>Display & sound</h3>
         <Toggle label="Show countdown" hint="Seconds left in each breath phase." checked={prefs.showCountdown} onChange={(v) => controller.setPrefs({ showCountdown: v })} />
         <Toggle label="Camera preview" hint="Hiding it never stops the measurement." checked={prefs.cameraVisible} onChange={(v) => controller.setPrefs({ cameraVisible: v })} />
+        <Toggle label="Performance mode" hint="While measuring, pause the orb animation, the wave drawing and the camera preview to leave more CPU to the measurement. Useful on slow or busy computers." checked={prefs.lowLoad} onChange={(v) => controller.setPrefs({ lowLoad: v })} />
         <Toggle label="SDK camera engine (experimental)" hint="The SDK opens the camera itself instead of the browser forwarding frames. Not verified to be faster; off is the documented default." checked={prefs.engine === 'native'} onChange={(v) => controller.setPrefs({ engine: v ? 'native' : 'browser' })} />
         <Toggle label="Brighten camera image" hint="Uses the camera's own brightness setting in dim rooms. Turn off if the light meter says Too bright." checked={prefs.cameraBoost} onChange={(v) => controller.setPrefs({ cameraBoost: v })} />
         <Toggle label="Screen light" hint="A warm white frame around the window to light your face in a dark room." checked={prefs.lightBoost} onChange={(v) => controller.setPrefs({ lightBoost: v })} />

@@ -10,6 +10,8 @@ interface Props {
   /** Called when the phase flips (used for the optional sound cue). */
   onPhase?: (phase: BreathPhase) => void;
   subLabel?: string;
+  /** Performance mode: update twice a second instead of every frame (no continuous animation). */
+  still?: boolean;
 }
 
 /**
@@ -17,7 +19,7 @@ interface Props {
  * every animation frame from the time-based pacer, so React re-renders only
  * twice per breath (phase word) plus once per second (countdown).
  */
-export function BreathOrb({ pacer, now, showCountdown, dim, onPhase, subLabel }: Props) {
+export function BreathOrb({ pacer, now, showCountdown, dim, onPhase, subLabel, still }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const [phase, setPhase] = useState<BreathPhase>('inhale');
@@ -50,11 +52,20 @@ export function BreathOrb({ pacer, now, showCountdown, dim, onPhase, subLabel }:
         lastCount = c;
         setCount(c);
       }
-      raf = requestAnimationFrame(loop);
+      if (!still) raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [pacer, now]);
+    let timer: ReturnType<typeof setInterval> | undefined;
+    if (still) {
+      loop();
+      timer = setInterval(loop, 500);
+    } else {
+      raf = requestAnimationFrame(loop);
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      if (timer) clearInterval(timer);
+    };
+  }, [pacer, now, still]);
 
   return (
     <div
