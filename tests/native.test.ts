@@ -33,7 +33,7 @@ function fakeSdkModule() {
     stopAsync: vi.fn(async () => {}),
     destroy: vi.fn(async () => {}),
   };
-  const module = { SmartSpectraSDK: vi.fn(() => sdk), CameraSelection: { default: {} }, breathingMetrics: [0, 1, 2] };
+  const module = { SmartSpectraSDK: vi.fn(function () { return sdk; }), CameraSelection: { default: {} }, breathingMetrics: [0, 1, 2] };
   return { sdk, module };
 }
 
